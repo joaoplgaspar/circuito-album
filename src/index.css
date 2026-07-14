@@ -1,0 +1,79 @@
+/* Fontes self-hosted (@fontsource) — só o subset latin e os pesos usados,
+   pra caber no budget de performance. */
+@import '@fontsource/space-grotesk/latin-500.css';
+@import '@fontsource/space-grotesk/latin-700.css';
+@import '@fontsource/space-mono/latin-400.css';
+@import '@fontsource/space-mono/latin-700.css';
+
+@import 'tailwindcss';
+
+/* ————————————————————————————————————————————————————————————————
+   CIRCUITO · tokens — direção de arte "painel de instrumentos"
+   (Seção 1 do brief)
+   ———————————————————————————————————————————————————————————————— */
+@theme {
+  /* Fundo azul-carvão profundo — a sala escura onde o objeto brilha */
+  --color-ink: #0a0c10;
+  /* Uma cor de fósforo: âmbar CRT */
+  --color-amber: #ffb000;
+  /* Neutros: cinzas azulados frios */
+  --color-steel: #8a93a5;
+  --color-graphite: #3a4150;
+
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, monospace;
+
+  /* Easing do sistema — bounce/elastic são proibidos */
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    background: var(--color-ink);
+  }
+
+  body {
+    @apply bg-ink font-display text-steel antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-amber);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-amber);
+    outline-offset: 3px;
+  }
+}
+
+@layer utilities {
+  /* Labels de instrumentação: CH 01 · 33⅓ RPM · LTD 200 */
+  .label-mono {
+    @apply font-mono text-xs tracking-[0.2em] uppercase;
+  }
+
+  /* Display em caixa alta, tracking apertado */
+  .display-tight {
+    @apply font-display font-bold uppercase tracking-[-0.02em];
+  }
+}
+
+/* A versão sem motion é uma página completa e digna — todo o conteúdo
+   permanece visível; as fases P2/P3 (3D/GSAP) checam esta media query
+   antes de montar qualquer coisa animada. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

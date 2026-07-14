@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0A0C10" />
+
+    <title>CIRCUITO — KILOWATT · PRENSA RECORDS</title>
+    <meta
+      name="description"
+      content="CIRCUITO, o álbum de estreia da KILOWATT em vinil transparente de 180g — edição limitada de 200 cópias numeradas pela PRENSA RECORDS. Lançamento fictício: demonstração de engenharia front-end por João Pedro Gaspar."
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="music.album" />
+    <meta property="og:title" content="CIRCUITO — KILOWATT" />
+    <meta
+      property="og:description"
+      content="Vinil transparente 180g · edição limitada de 200 · PRENSA RECORDS. Lançamento fictício — demonstração de engenharia front-end."
+    />
+    <meta property="og:image" content="/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="pt_BR" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="CIRCUITO — KILOWATT" />
+    <meta
+      name="twitter:description"
+      content="Vinil transparente 180g · edição limitada de 200 · PRENSA RECORDS. Lançamento fictício — demonstração de engenharia front-end."
+    />
+    <meta name="twitter:image" content="/og.png" />
+
+    <!-- JSON-LD: álbum FICTÍCIO — o disclaimer faz parte do dado estruturado -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "MusicAlbum",
+        "name": "Circuito",
+        "byArtist": { "@type": "MusicGroup", "name": "KILOWATT" },
+        "albumProductionType": "https://schema.org/StudioAlbum",
+        "numTracks": 8,
+        "recordLabel": "PRENSA RECORDS",
+        "disambiguatingDescription": "Álbum e banda fictícios. CIRCUITO é um lançamento fictício da PRENSA RECORDS — demonstração de engenharia front-end por João Pedro Gaspar."
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

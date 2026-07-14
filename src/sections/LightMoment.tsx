@@ -35,6 +35,16 @@ export function LightMoment() {
         <div data-vinyl-slot="light" className="relative aspect-square w-full">
           <VinylDisc pressing={pressing} className="vinyl-fallback w-full" />
         </div>
+        {/* glow que acende com o scroll (src/motion/init.ts) — o "bloom" do
+            case é CSS, não pós-processamento */}
+        <div
+          aria-hidden="true"
+          className="glow-overlay pointer-events-none absolute inset-0 z-20 opacity-0"
+          style={{
+            background:
+              'radial-gradient(ellipse at 50% 42%, rgba(255,176,0,0.20), rgba(255,176,0,0.05) 45%, transparent 72%)',
+          }}
+        />
       </div>
 
       <div

@@ -24,6 +24,13 @@ export function Panel({ id, mark, children, className = '' }: PanelProps) {
         aria-hidden="true"
         className="absolute top-0 -left-px h-16 w-px bg-amber"
       />
+      {/* trilho do traço de circuito: energiza via scaleY dirigido por scroll
+          (src/motion/init.ts); sem motion fica invisível e o segmento
+          estático acima faz o papel */}
+      <span
+        aria-hidden="true"
+        className="trace-fill absolute top-0 -left-px h-full w-px origin-top scale-y-0 bg-amber/80"
+      />
       <p className="label-mono mb-10 text-amber">{mark}</p>
       {children}
     </section>

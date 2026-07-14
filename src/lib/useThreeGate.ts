@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
 import { usePrefersReducedMotion } from './usePrefersReducedMotion'
+import { useFirstIntent } from './useFirstIntent'
 
 function supportsWebGL2(): boolean {
   try {
@@ -9,34 +9,19 @@ function supportsWebGL2(): boolean {
   }
 }
 
+let webgl2: boolean | null = null
+
 /**
  * Fallbacks em cascata do brief: reduced-motion → sem 3D; WebGL2
- * indisponível → sem 3D.
- *
- * Mesmo liberado, o chunk three/R3F só carrega na PRIMEIRA INTENÇÃO real
- * (scroll, toque, tecla) — nunca por timer. Quem não interage não paga o
- * parse de ~900KB, e a janela de carregamento (LCP/TBT) fica limpa: o
- * trade-off central do budget. Quem chega com a página já rolada
- * (refresh no meio) arma imediatamente.
+ * indisponível → sem 3D. Mesmo liberado, o chunk three/R3F só carrega na
+ * primeira intenção do usuário (useFirstIntent) — quem não interage não
+ * paga o parse de ~900KB.
  */
 export function useThreeGate(): boolean {
   const reducedMotion = usePrefersReducedMotion()
-  const [armed, setArmed] = useState(false)
+  const intent = useFirstIntent()
 
-  useEffect(() => {
-    if (reducedMotion || !supportsWebGL2()) return
-
-    if (window.scrollY > 0) {
-      setArmed(true)
-      return
-    }
-
-    const arm = () => setArmed(true)
-    const options = { once: true, passive: true } as const
-    const events = ['scroll', 'pointerdown', 'wheel', 'touchmove', 'keydown'] as const
-    events.forEach((e) => window.addEventListener(e, arm, options))
-    return () => events.forEach((e) => window.removeEventListener(e, arm))
-  }, [reducedMotion])
-
-  return armed && !reducedMotion
+  if (reducedMotion || !intent) return false
+  webgl2 ??= supportsWebGL2()
+  return webgl2
 }

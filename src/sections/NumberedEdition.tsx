@@ -9,6 +9,7 @@ export function NumberedEdition() {
   return (
     <Panel id="edicao" mark="06 · EDIÇÃO NUMERADA" className="text-center">
       <p
+        data-fx="stamp"
         aria-label={`Cópia ${ALBUM.editionCopy}`}
         className="display-tight mx-auto inline-block -rotate-3 border-4 border-amber px-8 py-4 text-[clamp(3rem,10vw,7rem)] leading-none text-amber"
       >

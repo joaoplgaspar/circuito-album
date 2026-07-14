@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import { ColdOpen } from './sections/ColdOpen'
 import { TheObject } from './sections/TheObject'
 import { TrackCircuit } from './sections/TrackCircuit'
@@ -9,18 +9,41 @@ import { BuyPanel } from './sections/BuyPanel'
 import { CreditsFooter } from './sections/CreditsFooter'
 import { ThreeErrorBoundary } from './components/ThreeErrorBoundary'
 import { useThreeGate } from './lib/useThreeGate'
+import { useFirstIntent } from './lib/useFirstIntent'
+import { usePrefersReducedMotion } from './lib/usePrefersReducedMotion'
 
 const ThreeLayer = lazy(() => import('./three/ThreeLayer'))
 
 /**
  * CIRCUITO — narrativa vertical contínua em 8 painéis (Seção 2 do brief).
- * A página estática (P1) renderiza completa por si só; a camada 3D (P2) é
- * um chunk lazy que só monta se useThreeGate liberar (motion permitido +
- * WebGL2 + primeiro scroll/idle). P3 → Lenis + ScrollTrigger, traço de
- * circuito, exploded view.
+ * A página estática renderiza completa por si só (e é prerenderizada em
+ * HTML no build). Por cima dela, dois chunks lazy gated pela primeira
+ * intenção do usuário e por prefers-reduced-motion:
+ *   "three"  → cena R3F do vinil (src/three/ThreeLayer.tsx)
+ *   "motion" → coreografia GSAP/Lenis (src/motion/init.ts)
  */
 function App() {
   const three = useThreeGate()
+  const reducedMotion = usePrefersReducedMotion()
+  const intent = useFirstIntent()
+  const motionOk = intent && !reducedMotion
+
+  // coreografia GSAP/Lenis (chunk "motion"): mesma regra do 3D — só na
+  // primeira intenção, nunca com reduced-motion
+  useEffect(() => {
+    if (!motionOk) return
+    let cancelled = false
+    let cleanup: (() => void) | undefined
+    import('./motion/init').then(async (m) => {
+      if (cancelled) return
+      cleanup = await m.initMotion()
+      if (cancelled) cleanup()
+    })
+    return () => {
+      cancelled = true
+      cleanup?.()
+    }
+  }, [motionOk])
 
   return (
     <>

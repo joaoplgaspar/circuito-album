@@ -6,14 +6,15 @@ const SPECS = [ALBUM.weight, 'Transparente', 'Tiragem 200', ALBUM.pressedIn, ALB
 
 /**
  * Painel 2 — O objeto. O vinil assume o centro; specs em mono orbitam nas
- * margens. Na P2 o SVG dá lugar à cena R3F (lazy) girando a 33⅓ sugerido.
+ * margens. Com 3D ativo, a View do canvas único (src/three/ThreeLayer.tsx)
+ * assume o slot e o disco gira a 33⅓ sugerido; o SVG é o fallback.
  */
 export function TheObject() {
   return (
     <Panel id="o-objeto" mark="02 · O OBJETO">
       <div className="grid items-center gap-12 md:grid-cols-[1fr_auto]">
-        <div className="relative mx-auto w-full max-w-md" data-vinyl-mount>
-          <VinylDisc pressing="transparente" className="w-full" />
+        <div data-vinyl-slot="object" className="relative mx-auto aspect-square w-full max-w-md">
+          <VinylDisc pressing="transparente" className="vinyl-fallback w-full" />
         </div>
 
         <ul className="flex flex-row flex-wrap gap-4 md:flex-col md:gap-6" aria-label="Especificações">

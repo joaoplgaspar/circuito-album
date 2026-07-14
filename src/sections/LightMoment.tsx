@@ -1,15 +1,16 @@
-import { useState } from 'react'
 import { Panel } from '../components/Panel'
 import { VinylDisc } from '../components/VinylDisc'
+import { usePressing, pressingStore } from '../lib/pressingStore'
 
 /**
- * Painel 5 — ⭐ O momento da luz. Toggle preta ↔ transparente. Na P2/P3 a
- * prensagem transparente monta o MeshPhysicalMaterial com transmission (só
- * aqui — antes disso, material padrão) e o feixe atravessa o disco. Na P1 o
- * toggle troca o render SVG e o brilho âmbar é gradiente CSS.
+ * Painel 5 — ⭐ O momento da luz. Toggle preta ↔ transparente. Com 3D ativo,
+ * a prensagem transparente monta o MeshPhysicalMaterial com transmission
+ * (só aqui — guardrail do brief) e o feixe atravessa o disco; o estado vive
+ * no pressingStore, compartilhado com a cena. Sem 3D, o toggle troca o
+ * render SVG e o brilho âmbar é gradiente CSS.
  */
 export function LightMoment() {
-  const [pressing, setPressing] = useState<'preta' | 'transparente'>('transparente')
+  const pressing = usePressing()
   const transparent = pressing === 'transparente'
 
   return (
@@ -24,14 +25,16 @@ export function LightMoment() {
       </p>
 
       <div
-        className="relative mx-auto max-w-md py-8"
+        className="light-glow relative mx-auto max-w-md py-8"
         style={
           transparent
             ? { background: 'radial-gradient(ellipse at 50% 45%, rgba(255,176,0,0.14), transparent 70%)' }
             : undefined
         }
       >
-        <VinylDisc pressing={pressing} className="w-full" />
+        <div data-vinyl-slot="light" className="relative aspect-square w-full">
+          <VinylDisc pressing={pressing} className="vinyl-fallback w-full" />
+        </div>
       </div>
 
       <div
@@ -45,7 +48,7 @@ export function LightMoment() {
             type="button"
             role="radio"
             aria-checked={pressing === option}
-            onClick={() => setPressing(option)}
+            onClick={() => pressingStore.set(option)}
             className={`label-mono cursor-pointer border px-5 py-3 transition-colors ${
               pressing === option
                 ? 'border-amber bg-amber/10 text-amber'

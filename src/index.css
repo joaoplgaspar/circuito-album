@@ -64,6 +64,17 @@
   }
 }
 
+/* Com a camada 3D viva (html[data-three='on']), os fallbacks SVG dos slots
+   saem de cena — mas continuam no DOM, prontos pra voltar se o WebGL cair. */
+html[data-three='on'] .vinyl-fallback {
+  visibility: hidden;
+}
+
+/* com 3D vivo, o glow do momento da luz vem do backdrop da cena */
+html[data-three='on'] .light-glow {
+  background: none !important;
+}
+
 /* A versão sem motion é uma página completa e digna — todo o conteúdo
    permanece visível; as fases P2/P3 (3D/GSAP) checam esta media query
    antes de montar qualquer coisa animada. */

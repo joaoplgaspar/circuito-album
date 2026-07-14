@@ -45,7 +45,18 @@ coração da case study.
 | Fontes self-hosted (@fontsource), só subset latin, 4 arquivos de peso | requisição a third-party + pesos não usados | zero render-blocking externo |
 | Vinil como SVG procedural na P1 (e como fallback permanente) | asset 3D/imagem pesada acima da dobra | LCP é o heading de texto |
 | Waveforms como SVG determinístico gerado em runtime | 8 imagens/sprites de waveform | bytes ~zero por faixa |
-| _(P2/P3 — a preencher a cada trade-off)_ | | |
+| **Prerender SSG no build** (`renderToString` + `hydrateRoot`, sem browser) | LCP refém do JS executar (3.7s no lab) | **LCP 1.4s** — o texto já está no HTML servido |
+| **Chunk 3D carrega na primeira intenção** (scroll/toque/tecla), nunca por timer | ~900KB de parse dentro da janela de carregamento (TBT 4.7s no lab) | **TBT 200ms**; quem não interage não paga |
+| Canvas único fixo + `View` (drei) portada em cada slot | um contexto WebGL por cena | 1 contexto, scissor por painel |
+| Bump map grayscale procedural em vez de normal map | asset de textura / lib de geração | ranhuras geradas em 1 canvas 2D |
+| Environment procedural (`frames={1}`, res 64) | HDR externo de ~1–2MB | reflexos sem nenhum fetch |
+| `transmission` só monta no painel 5 (antes, material padrão) | render target extra em todas as cenas | o custo do vidro isolado no clímax |
+| `dpr` cap 1.5 (mobile) / 2 (desktop) + `frameloop="demand"` fora de vista | overdraw em telas 3× + rAF permanente | GPU ociosa fora das cenas ativas |
+| Feixe de luz = cone aditivo + point light (zero pós-processamento) | stack de bloom | glow âmbar a custo ~zero |
+
+**Lighthouse parcial (gate P2, lab throttled 4×):** Performance mobile
+**52 → 97** depois do prerender SSG + gate por intenção. LCP 1.4s · TBT
+200ms · CLS 0.003.
 
 ## Stack
 
@@ -77,7 +88,7 @@ carregado só após o clique em `SOUND ON`.
 ## Fases
 
 - [x] **P1 — Direção + esqueleto:** tokens, tipografia, página completa estática (8 painéis), fallback reduced-motion
-- [ ] **P2 — O vinil:** modelo procedural R3F, materiais preta + transparente, lazy mount, fallbacks
+- [x] **P2 — O vinil:** modelo procedural R3F, materiais preta + transparente, canvas único com Views, lazy por intenção, prerender SSG, fallbacks
 - [ ] **P3 — Coreografia:** traço de circuito, reveals, exploded view, momento da luz, deep-link
 - [ ] **P4 — Áudio (opcional) + polish**
 - [ ] **P5 — Captura + launch**

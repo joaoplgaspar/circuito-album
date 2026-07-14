@@ -1,3 +1,4 @@
+import { Suspense, lazy } from 'react'
 import { ColdOpen } from './sections/ColdOpen'
 import { TheObject } from './sections/TheObject'
 import { TrackCircuit } from './sections/TrackCircuit'
@@ -6,15 +7,21 @@ import { LightMoment } from './sections/LightMoment'
 import { NumberedEdition } from './sections/NumberedEdition'
 import { BuyPanel } from './sections/BuyPanel'
 import { CreditsFooter } from './sections/CreditsFooter'
+import { ThreeErrorBoundary } from './components/ThreeErrorBoundary'
+import { useThreeGate } from './lib/useThreeGate'
+
+const ThreeLayer = lazy(() => import('./three/ThreeLayer'))
 
 /**
  * CIRCUITO — narrativa vertical contínua em 8 painéis (Seção 2 do brief).
- * P1: página completa estática — todo o conteúdo real, sem 3D nem motion.
- * O que entra depois, sempre lazy e gated por prefers-reduced-motion:
- *   P2 → cena R3F do vinil (dynamic import + intersection, src/three/)
- *   P3 → Lenis + ScrollTrigger, traço de circuito, exploded view
+ * A página estática (P1) renderiza completa por si só; a camada 3D (P2) é
+ * um chunk lazy que só monta se useThreeGate liberar (motion permitido +
+ * WebGL2 + primeiro scroll/idle). P3 → Lenis + ScrollTrigger, traço de
+ * circuito, exploded view.
  */
 function App() {
+  const three = useThreeGate()
+
   return (
     <>
       <a
@@ -35,6 +42,14 @@ function App() {
       </main>
 
       <CreditsFooter />
+
+      {three && (
+        <ThreeErrorBoundary>
+          <Suspense fallback={null}>
+            <ThreeLayer />
+          </Suspense>
+        </ThreeErrorBoundary>
+      )}
     </>
   )
 }

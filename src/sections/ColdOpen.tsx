@@ -14,9 +14,11 @@ export function ColdOpen() {
       aria-label="Abertura"
       className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden px-6 text-center"
     >
+      {/* fallback: sem 3D, o disco de fundo é este SVG; com 3D, o herói
+          assume exatamente esta estação (grande, apagado, ao fundo) */}
       <div
         data-fx="disc"
-        className="pointer-events-none absolute top-1/2 left-1/2 w-[130vmin] -translate-x-1/2 -translate-y-1/2 opacity-20 blur-[2px]"
+        className="vinyl-fallback pointer-events-none absolute top-1/2 left-1/2 w-[130vmin] -translate-x-1/2 -translate-y-1/2 opacity-20 blur-[2px]"
       >
         <VinylDisc pressing="preta" className="w-full" />
       </div>

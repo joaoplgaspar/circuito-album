@@ -36,9 +36,22 @@
     background: var(--color-ink);
   }
 
+  /* o fundo mora no <html>: o canvas do herói vive em z:-1, entre o fundo
+     e o conteúdo — o body precisa ser transparente */
   body {
-    @apply bg-ink font-display text-steel antialiased;
+    @apply font-display text-steel antialiased;
     text-rendering: optimizeLegibility;
+  }
+
+  /* grain sutil por cima de tudo (DOM + 3D) — unifica os renders */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.7 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
   ::selection {
@@ -64,15 +77,44 @@
   }
 }
 
-/* Com a camada 3D viva (html[data-three='on']), os fallbacks SVG dos slots
-   saem de cena — mas continuam no DOM, prontos pra voltar se o WebGL cair. */
+/* Com a camada 3D viva (html[data-three='on']), os fallbacks SVG/DOM saem
+   de cena — mas continuam no DOM, prontos pra voltar se o WebGL cair. */
 html[data-three='on'] .vinyl-fallback {
   visibility: hidden;
 }
 
-/* com 3D vivo, o glow do momento da luz vem do backdrop da cena */
+/* exploded view: fallback DOM some (mantendo o espaço do palco);
+   as etiquetas do diagrama só existem no modo 3D */
+html[data-three='on'] .exploded-fallback {
+  visibility: hidden;
+}
+.exploded-labels {
+  display: none;
+}
+html[data-three='on'] .exploded-labels {
+  display: block;
+}
+
+/* com 3D vivo, o glow estático dá lugar ao overlay scrubado */
 html[data-three='on'] .light-glow {
   background: none !important;
+}
+
+/* estação do traço de circuito: acende quando a linha passa */
+.trace-node {
+  position: absolute;
+  top: 6.05rem;
+  left: -4px;
+  width: 7px;
+  height: 7px;
+  background: var(--color-ink);
+  border: 1px solid var(--color-graphite);
+  transition: all 0.45s var(--ease-premium);
+}
+.trace-node.lit {
+  background: var(--color-amber);
+  border-color: var(--color-amber);
+  box-shadow: 0 0 12px 2px rgb(255 176 0 / 0.45);
 }
 
 /* A versão sem motion é uma página completa e digna — todo o conteúdo

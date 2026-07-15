@@ -54,9 +54,13 @@ coração da case study.
 | `dpr` cap 1.5 (mobile) / 2 (desktop) + `frameloop="demand"` fora de vista | overdraw em telas 3× + rAF permanente | GPU ociosa fora das cenas ativas |
 | Feixe de luz = cone aditivo + point light (zero pós-processamento) | stack de bloom | glow âmbar a custo ~zero |
 | GSAP/Lenis/SplitText no chunk "motion", também gated por intenção | ~52KB gzip na janela de carregamento | coreografia sem custo no load |
-| Traço de circuito = `scaleY` em transform (um span por painel) | SVG path longo com medição por frame | composite-only, custo ~zero |
+| Traço de circuito = `scaleY` em transform (um span por painel, ranges contíguos) | SVG path longo com medição por frame | composite-only, lê como linha única |
 | Glow do momento da luz = overlay CSS dirigido por scroll | bloom em pós-processamento | o "clímax" custa uma opacity |
 | Pins curtos (< 1.5 viewport) só em desktop; mobile scrub sem pin | scroll-jacking + jank em telas fracas | narrativa preservada nos dois |
+| Herói contínuo: 1 disco, 1 cena — GSAP e R3F conversam por um store plano | N cenas/Views com contexto e estado duplicados | o objeto viaja a página inteira sem cortes |
+| Slots do DOM rastreados por frame (`getBoundingClientRect`) | sistema de coordenadas duplicado (breakpoints em JS) | o disco gruda no layout em qualquer viewport |
+| Feixe = cone aditivo com alphaMap gradiente (1 canvas 2×256) | luz volumétrica/raymarching | o feixe nasce e morre suave a custo ~zero |
+| Grain de filme = 1 SVG `feTurbulence` estático via CSS | pós-processamento de noise por frame | DOM e 3D unificados numa passada |
 
 **Lighthouse parcial (gate P2, lab throttled 4×):** Performance mobile
 **52 → 97** depois do prerender SSG + gate por intenção. LCP 1.4s · TBT
@@ -93,7 +97,7 @@ carregado só após o clique em `SOUND ON`.
 
 - [x] **P1 — Direção + esqueleto:** tokens, tipografia, página completa estática (8 painéis), fallback reduced-motion
 - [x] **P2 — O vinil:** modelo procedural R3F, materiais preta + transparente, canvas único com Views, lazy por intenção, prerender SSG, fallbacks
-- [x] **P3 — Coreografia:** Lenis + ScrollTrigger, traço de circuito, reveals com SplitText, exploded view, momento da luz, stamp — deep-link já vinha da P1
+- [x] **P3 — Coreografia (reformulada):** vinil-herói contínuo viajando por todas as estações (cold open → objeto → margem das faixas → exploded 3D real → momento da luz → saída), Lenis + ScrollTrigger, traço contínuo com nodes, reveals com SplitText, parallax de ponteiro
 - [ ] **P4 — Áudio (opcional) + polish**
 - [ ] **P5 — Captura + launch**
 

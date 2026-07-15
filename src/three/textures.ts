@@ -150,17 +150,19 @@ export function makeBeamTexture(): THREE.CanvasTexture {
   small.height = 160
   const sctx = small.getContext('2d')!
 
+  // rampa LONGA no topo (nada de linha de início) e fade contínuo até a base
   const vertical = sctx.createLinearGradient(0, 0, 0, 160)
   vertical.addColorStop(0, 'rgba(255,176,0,0)')
-  vertical.addColorStop(0.1, 'rgba(255,196,60,0.9)')
-  vertical.addColorStop(0.62, 'rgba(255,176,0,0.5)')
+  vertical.addColorStop(0.2, 'rgba(255,192,50,0.35)')
+  vertical.addColorStop(0.42, 'rgba(255,196,60,0.85)')
+  vertical.addColorStop(0.72, 'rgba(255,176,0,0.45)')
   vertical.addColorStop(1, 'rgba(255,176,0,0)')
 
   sctx.filter = 'blur(5px)'
   sctx.fillStyle = vertical
   sctx.beginPath()
-  sctx.moveTo(33, 0)
-  sctx.lineTo(47, 0)
+  sctx.moveTo(36, 0)
+  sctx.lineTo(44, 0)
   sctx.lineTo(74, 160)
   sctx.lineTo(6, 160)
   sctx.closePath()

@@ -252,8 +252,10 @@ function HeroVinyl() {
           color="#ffb000"
         />
         <pointLight ref={pointRef} position={[0, 0.4, -1.3]} intensity={0} color="#ffb000" distance={6} />
-        <mesh position={[0, 1.15, -0.7]}>
-          <planeGeometry args={[3.1, 3.9]} />
+        {/* quad alto o bastante pro início do gradiente ficar sempre fora
+            da tela na estação da luz — sem linha de corte no topo */}
+        <mesh position={[0, 1.7, -0.7]}>
+          <planeGeometry args={[3.4, 5.4]} />
           <meshBasicMaterial
             ref={coneMatRef}
             map={tex.beam}

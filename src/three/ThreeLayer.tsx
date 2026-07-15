@@ -288,6 +288,7 @@ export default function ThreeLayer() {
 
   return (
     <Canvas
+      className="three-canvas"
       style={{ position: 'fixed', inset: 0, zIndex: -1, pointerEvents: 'none' }}
       dpr={[1, dprCap]}
       camera={{ position: [0, 0, 3.4], fov: 38 }}

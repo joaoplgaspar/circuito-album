@@ -46,7 +46,9 @@ coração da case study.
 | Vinil como SVG procedural na P1 (e como fallback permanente) | asset 3D/imagem pesada acima da dobra | LCP é o heading de texto |
 | Waveforms como SVG determinístico gerado em runtime | 8 imagens/sprites de waveform | bytes ~zero por faixa |
 | **Prerender SSG no build** (`renderToString` + `hydrateRoot`, sem browser) | LCP refém do JS executar (3.7s no lab) | **LCP 1.4s** — o texto já está no HTML servido |
-| **Chunk 3D carrega na primeira intenção** (scroll/toque/tecla), nunca por timer | ~900KB de parse dentro da janela de carregamento (TBT 4.7s no lab) | **TBT 200ms**; quem não interage não paga |
+| **Chunk 3D carrega no primeiro sinal de vida** (pointermove/toque/scroll), nunca por timer | ~900KB de parse dentro da janela de carregamento (TBT 4.7s no lab) | **TBT ~150ms**; no desktop o mouse arma o 3D antes do primeiro scroll |
+| Chunks lazy com `<link rel="prefetch">` injetado no build | espera de rede no momento da interação | bytes já no cache; o `import()` só paga parse |
+| Troca SVG→3D por crossfade com estado inicial casado 1:1 | pop visual na primeira dobra | o disco "ganha vida" em vez de trocar |
 | Canvas único fixo + `View` (drei) portada em cada slot | um contexto WebGL por cena | 1 contexto, scissor por painel |
 | Bump map grayscale procedural em vez de normal map | asset de textura / lib de geração | ranhuras geradas em 1 canvas 2D |
 | Environment procedural (`frames={1}`, res 64) | HDR externo de ~1–2MB | reflexos sem nenhum fetch |

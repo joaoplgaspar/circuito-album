@@ -33,15 +33,19 @@ export type HeroState = {
   my: number
 }
 
-/** estação inicial: fundo do cold open — grande, apagado, quase frontal */
-export const COLD: HeroTarget = { kind: 'free', nx: 0, ny: -0.04, scale: 2.05 }
+/**
+ * Estação inicial: fundo do cold open. CASADA 1:1 com o fallback SVG
+ * (mesmo centro, ~131svh de diâmetro, mesma opacidade) — o crossfade
+ * SVG→3D troca um pelo outro sem salto visual.
+ */
+export const COLD: HeroTarget = { kind: 'free', nx: 0, ny: 0, scale: 1.53 }
 
 export const hero: HeroState = {
   seg: { from: COLD, to: COLD, p: 1 },
-  tiltX: 0.5,
+  tiltX: 1.45,
   tiltZ: -0.06,
   spin: 0.14,
-  dim: 0.78,
+  dim: 0.8,
   explode: 0,
   glow: 0,
   vidro: false,

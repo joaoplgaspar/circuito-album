@@ -77,16 +77,29 @@
   }
 }
 
-/* Com a camada 3D viva (html[data-three='on']), os fallbacks SVG/DOM saem
-   de cena — mas continuam no DOM, prontos pra voltar se o WebGL cair. */
-html[data-three='on'] .vinyl-fallback {
-  visibility: hidden;
+/* A troca SVG→3D é um CROSSFADE, nunca um pop: o canvas nasce invisível e
+   revela em ~0.8s quando o primeiro frame renderiza (html[data-three='on']),
+   enquanto os fallbacks se dissolvem no mesmo compasso. Se o WebGL cair,
+   o caminho reverso acontece sozinho. */
+.three-canvas {
+  opacity: 0;
+  transition: opacity 0.8s var(--ease-premium);
+}
+html[data-three='on'] .three-canvas {
+  opacity: 1;
 }
 
-/* exploded view: fallback DOM some (mantendo o espaço do palco);
-   as etiquetas do diagrama só existem no modo 3D */
+.vinyl-fallback,
+.exploded-fallback {
+  transition: opacity 0.6s var(--ease-premium);
+}
+html[data-three='on'] .vinyl-fallback,
 html[data-three='on'] .exploded-fallback {
+  opacity: 0;
   visibility: hidden;
+  transition:
+    opacity 0.6s var(--ease-premium),
+    visibility 0s 0.6s;
 }
 .exploded-labels {
   display: none;

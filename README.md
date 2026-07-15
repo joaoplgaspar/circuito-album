@@ -61,7 +61,7 @@ coração da case study.
 | Pins curtos (< 1.5 viewport) só em desktop; mobile scrub sem pin | scroll-jacking + jank em telas fracas | narrativa preservada nos dois |
 | Herói contínuo: 1 disco, 1 cena — GSAP e R3F conversam por um store plano | N cenas/Views com contexto e estado duplicados | o objeto viaja a página inteira sem cortes |
 | Slots do DOM rastreados por frame (`getBoundingClientRect`) | sistema de coordenadas duplicado (breakpoints em JS) | o disco gruda no layout em qualquer viewport |
-| Feixe = cone aditivo com alphaMap gradiente (1 canvas 2×256) | luz volumétrica/raymarching | o feixe nasce e morre suave a custo ~zero |
+| Feixe = quad com gradiente PINTADO (canvas miniatura borrado + upscale bilinear), atrás do disco | luz volumétrica/raymarching e silhuetas de cone | zero aresta; o transmission refrata o feixe através do vidro |
 | Grain de filme = 1 SVG `feTurbulence` estático via CSS | pós-processamento de noise por frame | DOM e 3D unificados numa passada |
 
 **Lighthouse parcial (gate P2, lab throttled 4×):** Performance mobile

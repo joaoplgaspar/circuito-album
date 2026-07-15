@@ -139,22 +139,45 @@ export function makeInsertTexture(size = 1024): THREE.CanvasTexture {
 }
 
 /**
- * Gradiente de alpha do feixe (alphaMap lê o canal verde): nasce suave no
- * topo (vértice), encorpa no meio e morre macio na base — sem aresta dura.
+ * Feixe PINTADO — luz volumétrica fake sem geometria: um trapézio âmbar
+ * desenhado pequeno, borrado e ampliado (o upscale bilinear dissolve
+ * qualquer aresta). Vai num quad atrás do disco; nenhuma silhueta de cone.
  */
-export function makeBeamGradient(): THREE.CanvasTexture {
+export function makeBeamTexture(): THREE.CanvasTexture {
+  // desenha em miniatura...
+  const small = document.createElement('canvas')
+  small.width = 80
+  small.height = 160
+  const sctx = small.getContext('2d')!
+
+  const vertical = sctx.createLinearGradient(0, 0, 0, 160)
+  vertical.addColorStop(0, 'rgba(255,176,0,0)')
+  vertical.addColorStop(0.1, 'rgba(255,196,60,0.9)')
+  vertical.addColorStop(0.62, 'rgba(255,176,0,0.5)')
+  vertical.addColorStop(1, 'rgba(255,176,0,0)')
+
+  sctx.filter = 'blur(5px)'
+  sctx.fillStyle = vertical
+  sctx.beginPath()
+  sctx.moveTo(33, 0)
+  sctx.lineTo(47, 0)
+  sctx.lineTo(74, 160)
+  sctx.lineTo(6, 160)
+  sctx.closePath()
+  sctx.fill()
+
+  // ...e amplia: o filtro bilinear faz o feathering final
   const canvas = document.createElement('canvas')
-  canvas.width = 2
-  canvas.height = 256
+  canvas.width = 640
+  canvas.height = 1280
   const ctx = canvas.getContext('2d')!
-  const grad = ctx.createLinearGradient(0, 0, 0, 256)
-  grad.addColorStop(0, '#000')      // vértice: invisível
-  grad.addColorStop(0.3, '#555')
-  grad.addColorStop(0.8, '#fff')
-  grad.addColorStop(1, '#000')      // base: fade suave
-  ctx.fillStyle = grad
-  ctx.fillRect(0, 0, 2, 256)
-  return new THREE.CanvasTexture(canvas)
+  ctx.imageSmoothingEnabled = true
+  ctx.imageSmoothingQuality = 'high'
+  ctx.drawImage(small, 0, 0, 640, 1280)
+
+  const texture = new THREE.CanvasTexture(canvas)
+  texture.colorSpace = THREE.SRGBColorSpace
+  return texture
 }
 
 /** Selo central — a mesma direção de arte do fallback SVG. */

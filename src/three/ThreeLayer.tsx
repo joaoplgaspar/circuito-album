@@ -7,7 +7,7 @@ import {
   makeLabelTexture,
   makeCoverTexture,
   makeInsertTexture,
-  makeBeamGradient,
+  makeBeamTexture,
 } from './textures'
 import { hero, type HeroTarget } from '../lib/heroStore'
 import { pressingStore } from '../lib/pressingStore'
@@ -74,7 +74,7 @@ function HeroVinyl() {
       label: makeLabelTexture(),
       cover: makeCoverTexture(),
       insert: makeInsertTexture(),
-      beam: makeBeamGradient(),
+      beam: makeBeamTexture(),
     }),
     [],
   )
@@ -188,7 +188,7 @@ function HeroVinyl() {
     // feixe do momento da luz
     const glow = hero.glow * (wantVidro ? 1 : 0.25)
     beamRef.current!.visible = glow > 0.02
-    if (coneMatRef.current) coneMatRef.current.opacity = 0.16 * glow
+    if (coneMatRef.current) coneMatRef.current.opacity = 0.75 * glow
     if (spotRef.current) spotRef.current.intensity = 45 * glow
     if (pointRef.current) pointRef.current.intensity = 14 * glow
 
@@ -237,10 +237,11 @@ function HeroVinyl() {
         </mesh>
       </group>
 
-      {/* o feixe viaja com o herói; só acende na estação da luz. O cone fica
-          ATRÁS do plano do disco: o depth test oclui o que o disco cobre
-          (nada de cunha desenhada por cima do vinil) e o transmission
-          refrata o feixe através do vidro — a luz atravessa de verdade */}
+      {/* o feixe viaja com o herói; só acende na estação da luz. É um quad
+          PINTADO (gradiente feathered, zero silhueta geométrica) atrás do
+          plano do disco: o depth test oclui o que o disco cobre e o
+          transmission refrata o feixe através do vidro. A luz "de verdade"
+          sobre o material vem do spot + point. */}
       <group ref={beamRef} visible={false}>
         <spotLight
           ref={spotRef}
@@ -251,16 +252,14 @@ function HeroVinyl() {
           color="#ffb000"
         />
         <pointLight ref={pointRef} position={[0, 0.4, -1.3]} intensity={0} color="#ffb000" distance={6} />
-        <mesh position={[0, 1.0, -0.6]} rotation={[0.22, 0, 0]}>
-          <coneGeometry args={[1.15, 3.4, 32, 1, true]} />
+        <mesh position={[0, 1.15, -0.7]}>
+          <planeGeometry args={[3.1, 3.9]} />
           <meshBasicMaterial
             ref={coneMatRef}
-            color="#ffb000"
+            map={tex.beam}
             transparent
             opacity={0}
-            alphaMap={tex.beam}
             blending={THREE.AdditiveBlending}
-            side={THREE.DoubleSide}
             depthWrite={false}
           />
         </mesh>

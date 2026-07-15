@@ -139,7 +139,8 @@ function HeroVinyl() {
     const ts = a.s + (b.s - a.s) * p
 
     const g = positionRef.current!
-    const damp = 12
+    // damping macio: absorve rajadas de wheel sem o disco "correr" atrás
+    const damp = 8.5
     g.position.x = THREE.MathUtils.damp(g.position.x, tx, damp, delta)
     g.position.y = THREE.MathUtils.damp(g.position.y, ty, damp, delta)
     const s = THREE.MathUtils.damp(g.scale.x, ts, damp, delta)
@@ -160,8 +161,8 @@ function HeroVinyl() {
     const body = wantVidro && vidroMat.current ? vidroMat.current : mats.standard
     if (discRef.current!.material !== body) discRef.current!.material = body
 
-    // dim: o herói recua pro fundo sem sair de cena
-    const alpha = 1 - hero.dim * 0.85
+    // dim: o herói recua pro fundo sem sair de cena; em 1, some por completo
+    const alpha = Math.max(0, 1 - hero.dim)
     body.opacity = alpha
     mats.label.opacity = alpha
 
@@ -236,19 +237,22 @@ function HeroVinyl() {
         </mesh>
       </group>
 
-      {/* o feixe viaja com o herói; só acende na estação da luz */}
+      {/* o feixe viaja com o herói; só acende na estação da luz. O cone fica
+          ATRÁS do plano do disco: o depth test oclui o que o disco cobre
+          (nada de cunha desenhada por cima do vinil) e o transmission
+          refrata o feixe através do vidro — a luz atravessa de verdade */}
       <group ref={beamRef} visible={false}>
         <spotLight
           ref={spotRef}
-          position={[0, 2.6, -1.2]}
+          position={[0, 2.6, -1.4]}
           angle={0.5}
           penumbra={0.8}
           intensity={0}
           color="#ffb000"
         />
         <pointLight ref={pointRef} position={[0, 0.4, -1.3]} intensity={0} color="#ffb000" distance={6} />
-        <mesh position={[0, 1.1, -0.4]} rotation={[0.3, 0, 0]}>
-          <coneGeometry args={[1.15, 3.6, 32, 1, true]} />
+        <mesh position={[0, 1.0, -0.6]} rotation={[0.22, 0, 0]}>
+          <coneGeometry args={[1.15, 3.4, 32, 1, true]} />
           <meshBasicMaterial
             ref={coneMatRef}
             color="#ffb000"

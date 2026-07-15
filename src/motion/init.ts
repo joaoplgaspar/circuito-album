@@ -21,7 +21,8 @@ const EDGE: HeroTarget = { kind: 'free', nx: 0.62, ny: 0.08, scale: 0.85 }
 const EDGE_MOBILE: HeroTarget = { kind: 'free', nx: 0.95, ny: 0.12, scale: 0.7 }
 const STAGE: HeroTarget = { kind: 'free', nx: 0.16, ny: -0.3, scale: 0.68 }
 const STAGE_MOBILE: HeroTarget = { kind: 'free', nx: 0, ny: -0.22, scale: 0.5 }
-const EXIT: HeroTarget = { kind: 'free', nx: 0, ny: -1.6, scale: 0.5 }
+// saída discreta: encolhe e apaga enquanto desce — sem "fugir" da tela
+const EXIT: HeroTarget = { kind: 'free', nx: 0, ny: -1.5, scale: 0.32 }
 const OBJ_SLOT: HeroTarget = { kind: 'slot', id: 'object', fit: 0.95 }
 const LIGHT_SLOT: HeroTarget = { kind: 'slot', id: 'light', fit: 0.95 }
 
@@ -35,18 +36,20 @@ function heroLeg(
   vars?: Record<string, number>,
 ) {
   const seg = { from, to, p: 0 }
+  // scrub alto: o progresso persegue o scroll com atraso — junto com o
+  // damping da cena, o disco nunca "corre" em rajadas de wheel
   ScrollTrigger.create({
     trigger,
     start,
     end,
-    scrub: 0.4,
+    scrub: 0.9,
     onUpdate(self) {
       hero.seg = seg
       seg.p = self.progress
     },
   })
   if (vars) {
-    gsap.timeline({ scrollTrigger: { trigger, start, end, scrub: 0.4 } }).to(hero, {
+    gsap.timeline({ scrollTrigger: { trigger, start, end, scrub: 0.9 } }).to(hero, {
       ...vars,
       ease: 'none',
       immediateRender: false,
@@ -59,7 +62,7 @@ export async function initMotion(): Promise<() => void> {
   await document.fonts.ready
 
   // —— Lenis sobre o scroll nativo (teclado permanece nativo) ——
-  const lenis = new Lenis({ autoRaf: false, lerp: 0.12 })
+  const lenis = new Lenis({ autoRaf: false, lerp: 0.09 })
   lenis.on('scroll', ScrollTrigger.update)
   const raf = (time: number) => lenis.raf(time * 1000)
   gsap.ticker.add(raf)
@@ -204,8 +207,9 @@ export async function initMotion(): Promise<() => void> {
     )
 
     if (threeOk) {
-      heroLeg('#edicao', 'top 70%', 'top 15%', LIGHT_SLOT, EXIT, {
-        dim: 0.9,
+      // range longo: a saída percorre mais scroll — desce devagar, apagando
+      heroLeg('#edicao', 'top 85%', 'top 5%', LIGHT_SLOT, EXIT, {
+        dim: 1,
         spin: 0.12,
       })
       // herói some de vez no painel de compra (e volta se o scroll voltar)
